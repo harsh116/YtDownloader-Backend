@@ -121,14 +121,6 @@ const main = async (url, q) => {
   // }
 };
 
-if (!fs.existsSync("./playlist")) {
-  fs.mkdirSync("./playlist");
-  fs.writeFileSync("playlist/playlist.txt", "");
-  fs.writeFileSync("playlist/quality.txt", "");
-  fs.writeFileSync("playlist/playlist_audio.txt", "");
-  fs.writeFileSync("playlist/clear_cache.txt", "");
-}
-
 // const cacheClearStatus = fs.readFileSync("playlist/clear_cache.txt").toString();
 
 // const str1 = fs.readFileSync("playlist/" + "playlist.txt").toString();
@@ -145,9 +137,9 @@ app.post("/getList", async (req, res) => {
     );
     res.status(400).json("URL field was empty ");
   } else {
-    const str2 = fs.readFileSync("playlist/" + "quality.txt").toString();
+    // const str2 = fs.readFileSync("playlist/" + "quality.txt").toString();
     const list1 = str1.split(/\s+/g);
-    const list2 = str2.split(/\s+/g);
+    // const list2 = str2.split(/\s+/g);
 
     let x = 0;
     const playlistVideoURLs = [];
