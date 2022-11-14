@@ -65,11 +65,11 @@ async function scrapePage(url) {
   var elements;
   var goAgain = true;
   while (goAgain) {
-    const divCount = await page.$$eval(
-      "tp-yt-paper-spinner",
-      (divs) => divs.length
-    );
-    console.log("divs: ", divs);
+    const divCount = await page.$$eval("tp-yt-paper-spinner", (divs) => {
+      console.log("divs: ", divs);
+      return divs.length;
+    });
+
     await page.evaluate(async () => {
       window.scrollTo(0, document.querySelector("#primary").scrollHeight);
     });
