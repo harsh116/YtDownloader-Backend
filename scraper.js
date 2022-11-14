@@ -55,7 +55,7 @@ async function scrapePage(url) {
   const page = await browser.newPage();
   const totalStart = Date.now();
 
-  await page.goto(url);
+  await page.goto(url, { timeout: 0 });
   // await page.setViewport({
   //   width: 1200,
   //   height: 800,
