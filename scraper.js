@@ -69,6 +69,7 @@ async function scrapePage(url) {
       "tp-yt-paper-spinner",
       (divs) => divs.length
     );
+    console.log("divs: ", divs);
     await page.evaluate(async () => {
       window.scrollTo(0, document.querySelector("#primary").scrollHeight);
     });
