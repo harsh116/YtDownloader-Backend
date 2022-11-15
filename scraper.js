@@ -51,7 +51,9 @@ const autoScroll = async (page) => {
 
 async function scrapePage(url) {
   // const browser = await puppeteer.launch({executablePath: 'node_modules/chromium/lib/chromium/chrome-win/Chrome'});
-  const browser = await puppeteer.launch({});
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+  });
   const page = await browser.newPage();
   const totalStart = Date.now();
 
