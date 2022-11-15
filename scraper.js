@@ -72,10 +72,10 @@ async function scrapePage(url) {
       return divs.length;
     });
 
-    // await page.evaluate(async () => {
-    //   window.scrollTo(0, document.querySelector("#primary").scrollHeight);
-    //   // window.scrollTo(0, document.body.scrollHeight);
-    // });
+    await page.evaluate(async () => {
+      window.scrollTo(0, document.querySelector("#primary").scrollHeight);
+      // window.scrollTo(0, document.body.scrollHeight);
+    });
     goAgain = divCount != 0;
   }
   elements = await page.$$("a.ytd-playlist-video-renderer");
