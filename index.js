@@ -8,6 +8,7 @@ const corsOptions = {
   credentials: true,
 };
 
+const app = express();
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   // another common pattern
@@ -21,8 +22,6 @@ app.use((req, res, next) => {
     "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
   );
 });
-
-const app = express();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(express.static("public"));
