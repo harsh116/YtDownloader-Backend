@@ -132,45 +132,49 @@ const main = async (url, q) => {
 
 // const str1 = fs.readFileSync("playlist/" + "playlist.txt").toString();
 
-app.post("/getList", async (req, res) => {
-  const { str } = req.body;
-  const str1 = str;
-  console.log("body: ", str1);
-  // res.json("done");
-  // return;
-  if (str1.length == 0) {
-    console.log(
-      "Please start typing playlist links separated by space or new line"
-    );
-    res.status(400).json("URL field was empty ");
-  } else {
-    // const str2 = fs.readFileSync("playlist/" + "quality.txt").toString();
-    const list1 = str1.split(/\s+/g);
-    // const list2 = str2.split(/\s+/g);
+app.post(
+  "/getList",
+  async (req, res) => {
+    const { str } = req.body;
+    const str1 = str;
+    console.log("body: ", str1);
+    // res.json("done");
+    // return;
+    if (str1.length == 0) {
+      console.log(
+        "Please start typing playlist links separated by space or new line"
+      );
+      res.status(400).json("URL field was empty ");
+    } else {
+      // const str2 = fs.readFileSync("playlist/" + "quality.txt").toString();
+      const list1 = str1.split(/\s+/g);
+      // const list2 = str2.split(/\s+/g);
 
-    let x = 0;
-    const playlistVideoURLs = [];
-    for (let lis of list1) {
-      if (
-        lis.length == 0 ||
-        !(lis.length > 4 && lis.substr(0, 4).toLowerCase() === "http")
-      ) {
-        console.log("Invalid url");
-        playlistVideoURLs.push({ list: "Error", playListName: "NULL" });
-        continue;
+      let x = 0;
+      const playlistVideoURLs = [];
+      for (let lis of list1) {
+        if (
+          lis.length == 0 ||
+          !(lis.length > 4 && lis.substr(0, 4).toLowerCase() === "http")
+        ) {
+          console.log("Invalid url");
+          playlistVideoURLs.push({ list: "Error", playListName: "NULL" });
+          continue;
+        }
+        console.log("lis: ", lis);
+        const obj = await main(lis, "");
+        playlistVideoURLs.push({
+          list: obj.list,
+          playListName: obj.playListName,
+        });
+        x++;
       }
-      console.log("lis: ", lis);
-      const obj = await main(lis, "");
-      playlistVideoURLs.push({
-        list: obj.list,
-        playListName: obj.playListName,
-      });
-      x++;
-    }
 
-    res.status(200).json(playlistVideoURLs);
-  }
-});
+      res.status(200).json(playlistVideoURLs);
+    }
+  },
+  cors(corsOptions)
+);
 
 app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);

@@ -60,7 +60,7 @@ const autoScroll = async (page) => {
 };
 
 async function scrapePage(url) {
-  let options = {};
+  let options = { args: ["--no-sandbox"] };
 
   if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
     options = {
