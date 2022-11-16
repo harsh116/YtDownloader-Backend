@@ -24,7 +24,7 @@ const app = express();
 // });
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(express.static("./public"));
+app.use(express.static(__dirname + "/public"));
 
 app.post("/getList", getList);
 
