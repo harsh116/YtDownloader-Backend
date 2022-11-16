@@ -40,8 +40,8 @@ const express = require("express");
 
 const app = express();
 app.use(express.json());
-app.use(express.static(__dirname + "/build"));
-const { scrapePage } = require("./scraper").default;
+app.use(express.static(__dirname + "/public"));
+const { scrapePage } = require("./scraper");
 // const { title } = require("process");
 
 const gettingVideosURL = async (url) => {
