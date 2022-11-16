@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
+const cors = require("cors");
 
 const fs = require("fs");
 const FileSystemCache_1 = require("file-system-cache");
@@ -38,9 +39,14 @@ const getData = async (url) => {
 const PORT = process.env.PORT || 8081;
 const express = require("express");
 
+const corsOptions = {
+  credentials: true,
+};
+
 const app = express();
 app.use(express.json());
-app.use(express.static(__dirname + "/public"));
+app.use(cors(corsOptions));
+// app.use(express.static(__dirname + "/public"));
 const { scrapePage } = require("./scraper");
 // const { title } = require("process");
 
