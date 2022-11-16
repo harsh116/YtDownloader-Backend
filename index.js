@@ -132,7 +132,7 @@ const main = async (url, q) => {
 
 // const str1 = fs.readFileSync("playlist/" + "playlist.txt").toString();
 
-app.post("/getList", async (req, res) => {
+app.post("getList", async (req, res) => {
   const { str } = req.body;
   const str1 = str;
   console.log("body: ", str1);
