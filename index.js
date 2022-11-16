@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(express.static(__dirname + "/public"));
 
-app.post("/getList", getList);
+app.post("getList", getList);
 
 app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);
