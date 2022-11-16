@@ -8,6 +8,7 @@ const playlistoptions = {
   basePath: "./.cache/playlist", // Optional. Path where cache files are stored (default).
   ns: "playlist", // Optional. A grouping namespace for items.
 };
+// fs.writeFileSync()
 // const videoOptions = {
 //   basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
 //   ns: "videos", // Optional. A grouping namespace for items.
@@ -40,7 +41,7 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + "/build"));
-const { scrapePage } = require("./scraper");
+const { scrapePage } = require("./scraper").default;
 // const { title } = require("process");
 
 const gettingVideosURL = async (url) => {

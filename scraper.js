@@ -1,4 +1,14 @@
-const puppeteer = require("puppeteer");
+let puppeteer; //require("puppeteer");
+
+let chrome = {};
+
+if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+  chrome = require("chrome-aws-lambda");
+  puppeteer = require("puppeteer-core");
+} else {
+  puppeteer = require("puppeteer");
+}
+
 // var path = require("path");
 // const { resolve } = require("path");
 
@@ -50,10 +60,18 @@ const autoScroll = async (page) => {
 };
 
 async function scrapePage(url) {
+  let options = {};
+
+  if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+    options = {
+      args: [...chrome.args],
+      defaultViewPort: chrome.defaultViewPort,
+      executablePath: await chrome.executablePath,
+      ignoreHTTPSErrors: true,
+    };
+  }
   // const browser = await puppeteer.launch({executablePath: 'node_modules/chromium/lib/chromium/chrome-win/Chrome'});
-  const browser = await puppeteer.launch({
-    args: ["--no-sandbox"],
-  });
+  const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   const totalStart = Date.now();
 
