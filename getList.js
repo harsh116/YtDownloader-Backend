@@ -1,6 +1,9 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 
+const GetVideo = require("./GetVideo");
+const GetAudio = require("./GetAudio");
+
 const fs = require("fs");
 const FileSystemCache_1 = require("file-system-cache");
 
@@ -9,12 +12,15 @@ const playlistoptions = {
   ns: "playlist", // Optional. A grouping namespace for items.
 };
 // fs.writeFileSync()
-// const videoOptions = {
-//   basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
-//   ns: "videos", // Optional. A grouping namespace for items.
-// };
+
+const promiseSetTimeOut = (time) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, time);
+  });
+};
 const playlistCache = new FileSystemCache_1.FileSystemCache(playlistoptions);
-// const videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
@@ -37,7 +43,7 @@ const getData = async (url) => {
 
 // app.use(express.static(__dirname + "/public"));
 const { scrapePage } = require("./scraper");
-// const { title } = require("process");
+const { generateAudioDownloadURLS } = require("./getAudioList");
 
 const gettingVideosURL = async (url) => {
   let playListName = await getData(url);
@@ -60,78 +66,94 @@ const gettingVideosURL = async (url) => {
   return { list, playListName };
 };
 
-const main = async (url, q) => {
-  const { list, playListName } = await gettingVideosURL(url);
-  return { list, playListName };
-
+const generateVideoDownloadURLS = async (playListName, list, q) => {
   let i = 1;
 
   if (!q || !VALID_Q.includes(q)) {
     q = "480";
   }
 
+  const videoOptions = {
+    basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
+    ns: `videos_${q}`, // Optional. A grouping namespace for items.
+  };
+
+  const videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
+
   const videoList = [];
   for (let lis of list) {
     let title = await getData(lis);
     title = title.replace(regExURL, " ");
 
-    const isExist = fs.existsSync(`${playListName}/${title}.mp4`);
-    if (isExist) {
-      console.log(`${title} already exist`);
-      continue;
-    }
-
     let data = {};
 
     if (await videoCache.fileExists(lis)) {
       data = await videoCache.get(lis);
+      const downURL = data.urlDown;
+      console.log(i, ": ", downURL);
+      videoList.push({ downURL, title });
     } else {
       data = await GetVideo(lis, q);
-      videoCache.set(lis, data);
+
+      const downURL = data.urlDown;
+      console.log(i, ": ", downURL);
+
+      if (downURL === "Error") {
+        console.log("deteced", title);
+        // continue;
+      } else {
+        videoCache.set(lis, data);
+      }
+
+      await promiseSetTimeOut(1000);
+      videoList.push({ downURL, title });
     }
+    i++;
     // .then(async (data) => {
     // let title = data.title;
 
-    const downURL = data.urlDown;
-    console.log(i, ": ", downURL);
-    i++;
-
-    if (downURL === "Error") {
-      console.log("deteced", title);
-      continue;
-    }
-
-    try {
-      const res = await mainDownload(playListName, downURL, title, "video");
-      console.log("completed");
-    } catch (err) {
-      console.log("error: ", err);
-    }
-    // videoList.push({ downURL, title });
     // await mainDownload(playListName, downURL, title, "video");
     // });
   }
+
+  return videoList;
+};
+
+const main = async (url, q) => {
+  const { list, playListName } = await gettingVideosURL(url);
+  const videoList = await generateVideoDownloadURLS(playListName, list, q);
+
+  return { playListName, videoList };
+
+  // return { list, playListName };
+
   // console.log('videoList: ',videoList)
   // for (let videoli of videoList) {
 
   // }
 };
 
-const getList = async (req, res) => {
-  const { str } = req.body;
+const mainAudio = async (url) => {
+  const { list, playListName } = await gettingVideosURL(url);
+  const audioList = await generateAudioDownloadURLS(playListName, list);
 
-  const str1 = str;
-  console.log("body: ", str1);
+  return { playListName, audioList };
+};
+
+const getList = async (req, res) => {
+  const { playlistURL, quality, type } = req.body;
+
+  console.log("playlistURL: ", playlistURL);
   // res.json("done");
   // return;
-  if (str1.length == 0) {
+  if (playlistURL.length == 0) {
     console.log(
       "Please start typing playlist links separated by space or new line"
     );
     res.status(400).json("URL field was empty ");
   } else {
     // const str2 = fs.readFileSync("playlist/" + "quality.txt").toString();
-    const list1 = str1.split(/\s+/g);
+    const list1 = playlistURL.split(/\s+/g);
     // const list2 = str2.split(/\s+/g);
 
     let x = 0;
@@ -148,7 +170,7 @@ const getList = async (req, res) => {
       console.log("lis: ", lis);
       const obj = await main(lis, "");
       playlistVideoURLs.push({
-        list: obj.list,
+        videoList: obj.videoList,
         playListName: obj.playListName,
       });
       x++;
@@ -183,4 +205,4 @@ module.exports = { getList: allowCors(getList) };
 
 // const cacheClearStatus = fs.readFileSync("playlist/clear_cache.txt").toString();
 
-// const str1 = fs.readFileSync("playlist/" + "playlist.txt").toString();
+// const playlistURL = fs.readFileSync("playlist/" + "playlist.txt").toString();
