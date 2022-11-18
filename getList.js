@@ -1,10 +1,13 @@
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 
-const GetVideo = require("./GetVideo");
-const GetAudio = require("./GetAudio");
+// const GetVideo = require("./GetVideo");
+// const GetAudio = require("./GetAudio");
+const { generateVideoDownloadURLS } = require("./generateVideoDownloadURLS");
+const { generateAudioDownloadURLS } = require("./generateAudioDownloadURLS");
+const { getData } = require("./getData");
 
-const fs = require("fs");
+// const fs = require("fs");
 const FileSystemCache_1 = require("file-system-cache");
 
 const playlistoptions = {
@@ -13,37 +16,24 @@ const playlistoptions = {
 };
 // fs.writeFileSync()
 
-const promiseSetTimeOut = (time) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, time);
-  });
-};
+// const promiseSetTimeOut = (time) => {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve();
+//     }, time);
+//   });
+// };
+
 const playlistCache = new FileSystemCache_1.FileSystemCache(playlistoptions);
 
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+// process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
-const VALID_Q = ["144", "240", "360", "480", "720", "1080"];
+// const VALID_Q = ["144", "240", "360", "480", "720", "1080"];
 
 const regExURL = /[?:&"\/|]+/g;
 
-const getData = async (url) => {
-  const response = await fetch(url);
-  const html = await response.text();
-
-  const $ = cheerio.load(html);
-
-  const title =
-    $('meta[property="og:title"]').attr("content") ||
-    $("title").text() ||
-    $('meta[name="title"]').attr("content");
-  return title;
-};
-
 // app.use(express.static(__dirname + "/public"));
 const { scrapePage } = require("./scraper");
-const { generateAudioDownloadURLS } = require("./getAudioList");
 
 const gettingVideosURL = async (url) => {
   let playListName = await getData(url);
@@ -64,59 +54,6 @@ const gettingVideosURL = async (url) => {
   }
 
   return { list, playListName };
-};
-
-const generateVideoDownloadURLS = async (playListName, list, q) => {
-  let i = 1;
-
-  if (!q || !VALID_Q.includes(q)) {
-    q = "480";
-  }
-
-  const videoOptions = {
-    basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
-    ns: `videos_${q}`, // Optional. A grouping namespace for items.
-  };
-
-  const videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
-
-  const videoList = [];
-  for (let lis of list) {
-    let title = await getData(lis);
-    title = title.replace(regExURL, " ");
-
-    let data = {};
-
-    if (await videoCache.fileExists(lis)) {
-      data = await videoCache.get(lis);
-      const downURL = data.urlDown;
-      console.log(i, ": ", downURL);
-      videoList.push({ downURL, title });
-    } else {
-      data = await GetVideo(lis, q);
-
-      const downURL = data.urlDown;
-      console.log(i, ": ", downURL);
-
-      if (downURL === "Error") {
-        console.log("deteced", title);
-        // continue;
-      } else {
-        videoCache.set(lis, data);
-      }
-
-      await promiseSetTimeOut(1000);
-      videoList.push({ downURL, title });
-    }
-    i++;
-    // .then(async (data) => {
-    // let title = data.title;
-
-    // await mainDownload(playListName, downURL, title, "video");
-    // });
-  }
-
-  return videoList;
 };
 
 const main = async (url, q) => {
@@ -141,7 +78,9 @@ const mainAudio = async (url) => {
 };
 
 const getList = async (req, res) => {
-  const { playlistURL, quality, type } = req.body;
+  let { playlistURL, quality, type } = req.body;
+  playlistURL = playlistURL.trimStart();
+  playlistURL = playlistURL.trimEnd();
 
   console.log("playlistURL: ", playlistURL);
   // res.json("done");
@@ -168,11 +107,21 @@ const getList = async (req, res) => {
         continue;
       }
       console.log("lis: ", lis);
-      const obj = await main(lis, "");
-      playlistVideoURLs.push({
-        videoList: obj.videoList,
-        playListName: obj.playListName,
-      });
+
+      if (type === "video") {
+        const obj = await main(lis, quality);
+        playlistVideoURLs.push({
+          videoList: obj.videoList,
+          playListName: obj.playListName,
+        });
+      } else {
+        const obj = await mainAudio(lis);
+        playlistVideoURLs.push({
+          audioList: obj.audioList,
+          playListName: obj.playListName,
+        });
+      }
+
       x++;
     }
 

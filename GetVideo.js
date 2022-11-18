@@ -3,6 +3,11 @@ const tiny = require("tinyurl");
 const regex = require("./utils");
 const superagent = require("superagent");
 
+const extractNumber = (str) => {
+  const regex = /^([0-9]+)\D*/g;
+  return regex.exec(str)[1];
+};
+
 async function GetVideo(url, q = "480") {
   return new Promise(async (resolve, reject) => {
     if ((await regex(url)) == false) {
@@ -44,7 +49,7 @@ async function GetVideo(url, q = "480") {
 
         // return
         // const $ = load(res.text['result']);
-        const imageSrc = $('div[class="thumbnail cover"]')
+        let imageSrc = $('div[class="thumbnail cover"]')
             .find("a > img")
             .attr("src"),
           title = $('div[class="caption text-left"]').find("b").text(),
@@ -61,6 +66,8 @@ async function GetVideo(url, q = "480") {
 
         // console.log(title, quality);
         // console.log('q: ',q)
+        quality = extractNumber(quality);
+        quality = Number(quality) > Number(q) ? q : quality;
 
         superagent
           .post("https://www.y2mate.com/mates/en68/convert")
@@ -71,7 +78,7 @@ async function GetVideo(url, q = "480") {
           .field("ajax", "1")
           .field("token", "")
           .field("ftype", type)
-          .field("fquality", Number(quality) > Number(q) ? q : quality)
+          .field("fquality", quality)
           .then(async function (body) {
             const resultString = JSON.parse(body.text).result.toString();
             // console.log('resultString: ',resultString)

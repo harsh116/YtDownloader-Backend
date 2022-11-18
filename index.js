@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 
 const { getList } = require("./getList");
-
+const { getIndividualList } = require("./getIndividualList");
 const corsOptions = {
   credentials: true,
 };
@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/getList", getList);
+app.post("/getIndividualList", getIndividualList);
 
 app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);
