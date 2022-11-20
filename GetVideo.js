@@ -66,6 +66,7 @@ async function GetVideo(url, q = "480") {
 
         // console.log(title, quality);
         // console.log('q: ',q)
+        const highestQ=quality;  
         quality = extractNumber(quality);
         quality = Number(quality) > Number(q) ? q : quality;
 
@@ -95,6 +96,7 @@ async function GetVideo(url, q = "480") {
               quality,
               imageSrc,
               urlDown,
+              highestQ
             });
           })
           .catch((err) => {

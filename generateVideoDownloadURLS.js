@@ -7,6 +7,8 @@ const regExURL = /[?:&"\/|]+/g;
 
 const VALID_Q = ["144", "240", "360", "480", "720", "1080"];
 
+
+
 const generateVideoDownloadURLS = async (playListName, list, q) => {
   let i = 1;
 
@@ -14,39 +16,24 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
     q = "480";
   }
 
+  const videoList = [];
   let videoOptions = {
     basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
-    ns: `videos_${q}`, // Optional. A grouping namespace for items.
+    ns: `videos`, // Optional. A grouping namespace for items.
   };
 
   let videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
 
-  const videoList = [];
-  for (let lis of list) {
-    let title = await getData(lis);
+  const videoLisRecur=async(lis,q)=>{
+  let title = await getData(lis);
     title = title.replace(regExURL, " ");
 
-    let data = {};
+    let obj = {};
 
-    if (await videoCache.fileExists(lis)) {
-      data = await videoCache.get(lis);
-      const downURL = data.urlDown;
-      const quality = data.quality;
-      console.log(i, ": ", downURL);
-      const titleQuality = `${title} ${quality}`;
-      console.log(titleQuality);
-
-      videoList.push({ downURL, titleQuality });
-    } else {
-      data = await GetVideo(lis, q);
+    const videoLisRecurElse=async()=>{
+      let data = await GetVideo(lis, q);
       let quality = data.quality;
-
-      videoOptions = {
-        basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
-        ns: `videos_${quality}`, // Optional. A grouping namespace for items.
-      };
-
-      videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
+      obj[quality]=data
 
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
@@ -55,7 +42,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
         console.log("deteced", title);
         // continue;
       } else {
-        videoCache.set(lis, data);
+        videoCache.set(lis, obj);
       }
 
       await promiseSetTimeOut(1000);
@@ -63,6 +50,46 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
       console.log(titleQuality);
       videoList.push({ downURL, titleQuality });
     }
+
+    if (await videoCache.fileExists(lis)) {
+      obj = await videoCache.get(lis);
+      if(obj[q])
+      {
+        const data=obj[q]
+        const downURL = data.urlDown;
+      const quality = data.quality;
+      console.log(i, ": ", downURL);
+      const titleQuality = `${title} ${quality}`;
+      console.log(titleQuality);
+
+      videoList.push({ downURL, titleQuality });
+      }
+      else{
+        const keys=Object.keys(obj)
+        const {highestQ}=obj[keys[0]]
+        const quality= Number(highestQ) > Number(q) ? q : highestQ;
+
+        if(keys.includes(quality))
+        {
+          await videoLisRecur(lis,quality)  
+        }
+        else{
+            await videoLisRecurElse()
+        }
+        
+      }
+
+      
+    } else {
+      await videoLisRecurElse()
+    }
+}
+
+
+
+  
+  for (let lis of list) {
+    await videoLisRecur(lis,q)
     i++;
     // .then(async (data) => {
     // let title = data.title;
@@ -87,6 +114,8 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
   };
 
   let videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
+
+
 
   // const videoList = [];
   // for (let lis of list) {
