@@ -40,6 +40,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
 
       if (downURL === "Error") {
         console.log("deteced", title);
+        // return;
         // continue;
       } else {
         videoCache.set(lis, obj);
@@ -48,7 +49,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
       await promiseSetTimeOut(1000);
       const titleQuality = `${title} ${quality}`;
       console.log(titleQuality);
-      videoList.push({ downURL, titleQuality });
+      videoList.push({ downURL, title: titleQuality });
     }
 
     if (await videoCache.fileExists(lis)) {
@@ -62,7 +63,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
       const titleQuality = `${title} ${quality}`;
       console.log(titleQuality);
 
-      videoList.push({ downURL, titleQuality });
+      videoList.push({ downURL, title: titleQuality });
       }
       else{
         const keys=Object.keys(obj)
@@ -115,50 +116,112 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
 
   let videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
 
+  const videoLisRecur=async(lis,q)=>{
+    let title = await getData(lis);
+    title = title.replace(regExURL, " ");
 
+    let obj = {};
+
+    const videoLisRecurElse=async()=>{
+      let data = await GetVideo(lis, q);
+      let quality = data.quality;
+      obj[quality]=data
+
+      const downURL = data.urlDown;
+      console.log(i, ": ", downURL);
+
+      if (downURL === "Error") {
+        console.log("deteced", title);
+        // continue;
+      } else {
+        videoCache.set(lis, obj);
+      }
+
+      await promiseSetTimeOut(1000);
+      const titleQuality = `${title} ${quality}`;
+      console.log(titleQuality);
+      return { videoURL: downURL, title: titleQuality };
+
+    }
+
+    if (await videoCache.fileExists(lis)) {
+      obj = await videoCache.get(lis);
+      if(obj[q])
+      {
+        const data=obj[q]
+        const downURL = data.urlDown;
+        const quality = data.quality;
+        console.log(i, ": ", downURL);
+        const titleQuality = `${title} ${quality}`;
+        console.log(titleQuality);
+
+        return { videoURL: downURL, title: titleQuality };
+      }
+      else{
+        const keys=Object.keys(obj)
+        const {highestQ}=obj[keys[0]]
+        const quality= Number(highestQ) > Number(q) ? q : highestQ;
+
+        if(keys.includes(quality))
+        {
+          return await videoLisRecur(lis,quality)
+        }
+        else{
+          return await videoLisRecurElse()
+        }
+
+      }
+
+
+    } else {
+      return await videoLisRecurElse()
+    }
+  }
+
+  return await videoLisRecur(lis,q)
 
   // const videoList = [];
   // for (let lis of list) {
-  let title = await getData(lis);
-  title = title.replace(regExURL, " ");
-
-  let data = {};
-
-  if (await videoCache.fileExists(lis)) {
-    data = await videoCache.get(lis);
-    const downURL = data.urlDown;
-    const quality = data.quality;
-    console.log(i, ": ", downURL);
-    const titleQuality = `${title} ${quality}`;
-    console.log(titleQuality);
-
-    return { videoURL: downURL, title: titleQuality };
-  } else {
-    data = await GetVideo(lis, q);
-    let quality = data.quality;
-
-    videoOptions = {
-      basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
-      ns: `videos_${quality}`, // Optional. A grouping namespace for items.
-    };
-
-    videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
-
-    const downURL = data.urlDown;
-    console.log(i, ": ", downURL);
-
-    if (downURL === "Error") {
-      console.log("deteced", title);
-      // continue;
-    } else {
-      videoCache.set(lis, data);
-    }
-
-    await promiseSetTimeOut(1000);
-    const titleQuality = `${title} ${quality}`;
-    console.log(titleQuality);
-    return { videoURL: downURL, title: titleQuality };
-  }
+  // let title = await getData(lis);
+  // title = title.replace(regExURL, " ");
+  //
+  // let data = {};
+  //
+  // if (await videoCache.fileExists(lis)) {
+  //   data = await videoCache.get(lis);
+  //   const downURL = data.urlDown;
+  //   const quality = data.quality;
+  //   console.log(i, ": ", downURL);
+  //   const titleQuality = `${title} ${quality}`;
+  //   console.log(titleQuality);
+  //
+  //   return { videoURL: downURL, title: titleQuality };
+  // } else {
+  //   data = await GetVideo(lis, q);
+  //   let quality = data.quality;
+  //
+  //   videoOptions = {
+  //     basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
+  //     ns: `videos_${quality}`, // Optional. A grouping namespace for items.
+  //   };
+  //
+  //   videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
+  //
+  //   const downURL = data.urlDown;
+  //   console.log(i, ": ", downURL);
+  //
+  //   if (downURL === "Error") {
+  //     console.log("deteced", title);
+  //     // continue;
+  //   } else {
+  //     videoCache.set(lis, data);
+  //   }
+  //
+  //   await promiseSetTimeOut(1000);
+  //   const titleQuality = `${title} ${quality}`;
+  //   console.log(titleQuality);
+  //   return { videoURL: downURL, title: titleQuality };
+  // }
 
   // .then(async (data) => {
   // let title = data.title;
@@ -166,8 +229,7 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
   // await mainDownload(playListName, downURL, title, "video");
   // });
   // }
-  console.log(" ");
-  return videoList;
+
 };
 
 module.exports = {
