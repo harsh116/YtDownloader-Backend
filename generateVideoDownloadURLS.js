@@ -1,13 +1,11 @@
 const GetVideo = require("./GetVideo");
 const { getData } = require("./getData");
 const FileSystemCache_1 = require("file-system-cache");
-const { promiseSetTimeOut } = require("./helper");
+const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
 
 const regExURL = /[?:&"\/|]+/g;
 
 const VALID_Q = ["144", "240", "360", "480", "720", "1080"];
-
-
 
 const generateVideoDownloadURLS = async (playListName, list, q) => {
   let i = 1;
@@ -24,16 +22,18 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
 
   let videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
 
-  const videoLisRecur=async(lis,q)=>{
-  let title = await getData(lis);
+  const videoLisRecur = async (lis, q) => {
+    let title = await getData(lis);
     title = title.replace(regExURL, " ");
 
     let obj = {};
 
-    const videoLisRecurElse=async()=>{
+    const videoLisRecurElse = async () => {
       let data = await GetVideo(lis, q);
+
+      data["expiry_time"] = getExpiryTimeInHours(0.5);
       let quality = data.quality;
-      obj[quality]=data
+      obj[quality] = data;
 
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
@@ -50,47 +50,43 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
       const titleQuality = `${title} ${quality}`;
       console.log(titleQuality);
       videoList.push({ downURL, title: titleQuality });
-    }
+    };
 
     if (await videoCache.fileExists(lis)) {
       obj = await videoCache.get(lis);
-      if(obj[q])
-      {
-        const data=obj[q]
+      if (obj[q]) {
+        if (obj[q].expiry_time < Date.now()) {
+          delete obj[q];
+          videoCache.set(lis, obj);
+          await videoLisRecurElse();
+          return;
+        }
+        const data = obj[q];
         const downURL = data.urlDown;
-      const quality = data.quality;
-      console.log(i, ": ", downURL);
-      const titleQuality = `${title} ${quality}`;
-      console.log(titleQuality);
+        const quality = data.quality;
+        console.log(i, ": ", downURL);
+        const titleQuality = `${title} ${quality}`;
+        console.log(titleQuality);
 
-      videoList.push({ downURL, title: titleQuality });
-      }
-      else{
-        const keys=Object.keys(obj)
-        const {highestQ}=obj[keys[0]]
-        const quality= Number(highestQ) > Number(q) ? q : highestQ;
+        videoList.push({ downURL, title: titleQuality });
+      } else {
+        const keys = Object.keys(obj);
+        const { highestQ } = obj[keys[0]];
+        const quality = Number(highestQ) > Number(q) ? q : highestQ;
 
-        if(keys.includes(quality))
-        {
-          await videoLisRecur(lis,quality)  
+        if (keys.includes(quality)) {
+          await videoLisRecur(lis, quality);
+        } else {
+          await videoLisRecurElse();
         }
-        else{
-            await videoLisRecurElse()
-        }
-        
       }
-
-      
     } else {
-      await videoLisRecurElse()
+      await videoLisRecurElse();
     }
-}
+  };
 
-
-
-  
   for (let lis of list) {
-    await videoLisRecur(lis,q)
+    await videoLisRecur(lis, q);
     i++;
     // .then(async (data) => {
     // let title = data.title;
@@ -116,16 +112,16 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
 
   let videoCache = new FileSystemCache_1.FileSystemCache(videoOptions);
 
-  const videoLisRecur=async(lis,q)=>{
+  const videoLisRecur = async (lis, q) => {
     let title = await getData(lis);
     title = title.replace(regExURL, " ");
 
     let obj = {};
 
-    const videoLisRecurElse=async()=>{
+    const videoLisRecurElse = async () => {
       let data = await GetVideo(lis, q);
       let quality = data.quality;
-      obj[quality]=data
+      obj[quality] = data;
 
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
@@ -141,14 +137,18 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
       const titleQuality = `${title} ${quality}`;
       console.log(titleQuality);
       return { videoURL: downURL, title: titleQuality };
-
-    }
+    };
 
     if (await videoCache.fileExists(lis)) {
       obj = await videoCache.get(lis);
-      if(obj[q])
-      {
-        const data=obj[q]
+      if (obj[q]) {
+        if (obj[q].expiry_time < Date.now()) {
+          delete obj[q];
+          videoCache.set(lis, obj);
+          await videoLisRecurElse();
+          return;
+        }
+        const data = obj[q];
         const downURL = data.urlDown;
         const quality = data.quality;
         console.log(i, ": ", downURL);
@@ -156,29 +156,23 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
         console.log(titleQuality);
 
         return { videoURL: downURL, title: titleQuality };
-      }
-      else{
-        const keys=Object.keys(obj)
-        const {highestQ}=obj[keys[0]]
-        const quality= Number(highestQ) > Number(q) ? q : highestQ;
+      } else {
+        const keys = Object.keys(obj);
+        const { highestQ } = obj[keys[0]];
+        const quality = Number(highestQ) > Number(q) ? q : highestQ;
 
-        if(keys.includes(quality))
-        {
-          return await videoLisRecur(lis,quality)
+        if (keys.includes(quality)) {
+          return await videoLisRecur(lis, quality);
+        } else {
+          return await videoLisRecurElse();
         }
-        else{
-          return await videoLisRecurElse()
-        }
-
       }
-
-
     } else {
-      return await videoLisRecurElse()
+      return await videoLisRecurElse();
     }
-  }
+  };
 
-  return await videoLisRecur(lis,q)
+  return await videoLisRecur(lis, q);
 
   // const videoList = [];
   // for (let lis of list) {
@@ -229,7 +223,6 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
   // await mainDownload(playListName, downURL, title, "video");
   // });
   // }
-
 };
 
 module.exports = {

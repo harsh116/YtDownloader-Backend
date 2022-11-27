@@ -1,7 +1,7 @@
 const GetAudio = require("./GetAudio");
 const { getData } = require("./getData");
 const FileSystemCache_1 = require("file-system-cache");
-const { promiseSetTimeOut } = require("./helper");
+const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
 
 const regExURL = /[?:&"\/|]+/g;
 
@@ -22,13 +22,9 @@ const generateAudioDownloadURLS = async (playListName, list) => {
 
     let data = {};
 
-    if (await audioCache.fileExists(lis)) {
-      data = await audioCache.get(lis);
-      const downURL = data.urlDown;
-      console.log(i, ": ", downURL);
-      audioList.push({ downURL, title });
-    } else {
+    const elsePart = async () => {
       data = await GetAudio(lis);
+      data["expiry_time"] = getExpiryTimeInHours(0.5);
 
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
@@ -42,6 +38,21 @@ const generateAudioDownloadURLS = async (playListName, list) => {
 
       await promiseSetTimeOut(1000);
       audioList.push({ downURL, title });
+    };
+
+    if (await audioCache.fileExists(lis)) {
+      data = await audioCache.get(lis);
+      if (data.expiry_time < Date.now()) {
+        audioCache.remove(lis);
+        await elsePart();
+        return;
+      }
+
+      const downURL = data.urlDown;
+      console.log(i, ": ", downURL);
+      audioList.push({ downURL, title });
+    } else {
+      await elsePart();
     }
     i++;
     // .then(async (data) => {
@@ -71,12 +82,7 @@ const generateIndividualAudioDownloadURL = async (playListName, lis) => {
 
   let data = {};
 
-  if (await audioCache.fileExists(lis)) {
-    data = await audioCache.get(lis);
-    const downURL = data.urlDown;
-    console.log(i, ": ", downURL);
-    return { audioURL: downURL, title };
-  } else {
+  const elsePart = async () => {
     data = await GetAudio(lis);
 
     const downURL = data.urlDown;
@@ -91,8 +97,21 @@ const generateIndividualAudioDownloadURL = async (playListName, lis) => {
 
     await promiseSetTimeOut(1000);
     return { audioURL: downURL, title };
+  };
+
+  if (await audioCache.fileExists(lis)) {
+    data = await audioCache.get(lis);
+    if (data.expiry_time < Date.now()) {
+      audioCache.remove(lis);
+      return await elsePart();
+    }
+    const downURL = data.urlDown;
+    console.log(i, ": ", downURL);
+    return { audioURL: downURL, title };
+  } else {
+    return await elsePart();
   }
-  i++;
+
   // .then(async (data) => {
   // let title = data.title;
 

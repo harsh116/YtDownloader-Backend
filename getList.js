@@ -6,6 +6,7 @@ const fetch = require("node-fetch");
 const { generateVideoDownloadURLS } = require("./generateVideoDownloadURLS");
 const { generateAudioDownloadURLS } = require("./generateAudioDownloadURLS");
 const { getData } = require("./getData");
+const {  getExpiryTimeInHours } = require("./helper");
 
 // const fs = require("fs");
 const FileSystemCache_1 = require("file-system-cache");
@@ -45,15 +46,25 @@ const gettingVideosURL = async (url) => {
   }
   playListName = playListName.replace(regExURL, " ");
   console.log("playlist name: ", playListName);
-  let list = [];
+  let obj={}
+  const elsePart=async()=>{
+    const list = await scrapePage(url);
+    obj['expiry_time']= getExpiryTimeInHours(1)
+    obj['list']=list
+    await playlistCache.set(url, obj);
+  }
   if (await playlistCache.fileExists(url)) {
-    list = await playlistCache.get(url);
+    obj = await playlistCache.get(url);
+      if (obj.expiry_time < Date.now()) {
+        playlistCache.remove(url);
+       await elsePart()
+        
+      }
   } else {
-    list = await scrapePage(url);
-    await playlistCache.set(url, list);
+    await elsePart()
   }
 
-  return { list, playListName };
+  return { list:obj.list, playListName };
 };
 
 const main = async (url, q) => {
