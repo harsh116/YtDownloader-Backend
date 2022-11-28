@@ -2,7 +2,7 @@ let puppeteer; //require("puppeteer");
 
 let chrome = {};
 
-const BROWSERLESS_API_KEY = "0fd64530-2641-45f8-853b-b2d6414875f8";
+const BROWSERLESS_API_KEY = process.env["TOKEN"];
 
 if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   chrome = require("chrome-aws-lambda");
