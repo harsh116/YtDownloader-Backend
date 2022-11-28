@@ -2,11 +2,13 @@ let puppeteer; //require("puppeteer");
 
 let chrome = {};
 
+const BROWSERLESS_API_KEY = "0fd64530-2641-45f8-853b-b2d6414875f8";
+
 if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
   chrome = require("chrome-aws-lambda");
   puppeteer = require("puppeteer-core");
 } else {
-  puppeteer = require("puppeteer");
+  puppeteer = require("puppeteer-core");
 }
 
 // var path = require("path");
@@ -60,7 +62,10 @@ const autoScroll = async (page) => {
 };
 
 async function scrapePage(url) {
-  let options = { args: ["--no-sandbox"] };
+  let options = {
+    // args: ["--no-sandbox"],
+    browserWSEndpoint: `wss://chrome.browserless.io?token=${BROWSERLESS_API_KEY}&stealth`,
+  };
 
   if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
     options = {
@@ -71,7 +76,8 @@ async function scrapePage(url) {
     };
   }
   // const browser = await puppeteer.launch({executablePath: 'node_modules/chromium/lib/chromium/chrome-win/Chrome'});
-  const browser = await puppeteer.launch(options);
+  // const browser = await puppeteer.launch(options);
+  const browser = await puppeteer.connect(options);
   const page = await browser.newPage();
   const totalStart = Date.now();
 
