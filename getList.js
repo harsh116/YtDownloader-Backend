@@ -6,13 +6,13 @@ const fetch = require("node-fetch");
 const { generateVideoDownloadURLS } = require("./generateVideoDownloadURLS");
 const { generateAudioDownloadURLS } = require("./generateAudioDownloadURLS");
 const { getData } = require("./getData");
-const {  getExpiryTimeInHours } = require("./helper");
+const { getExpiryTimeInHours } = require("./helper");
 
 // const fs = require("fs");
-const FileSystemCache_1 = require("file-system-cache");
+const FileSystemCache_1 = require("./FileSystemCache_1");
 
 const playlistoptions = {
-  basePath: "./.cache/playlist", // Optional. Path where cache files are stored (default).
+  basePath: "./cache/playlist", // Optional. Path where cache files are stored (default).
   ns: "playlist", // Optional. A grouping namespace for items.
 };
 // fs.writeFileSync()
@@ -46,25 +46,24 @@ const gettingVideosURL = async (url) => {
   }
   playListName = playListName.replace(regExURL, " ");
   console.log("playlist name: ", playListName);
-  let obj={}
-  const elsePart=async()=>{
+  let obj = {};
+  const elsePart = async () => {
     const list = await scrapePage(url);
-    obj['expiry_time']= getExpiryTimeInHours(1)
-    obj['list']=list
+    obj["expiry_time"] = getExpiryTimeInHours(1);
+    obj["list"] = list;
     await playlistCache.set(url, obj);
-  }
+  };
   if (await playlistCache.fileExists(url)) {
     obj = await playlistCache.get(url);
-      if (obj.expiry_time < Date.now()) {
-        playlistCache.remove(url);
-       await elsePart()
-        
-      }
+    if (obj.expiry_time < Date.now()) {
+      playlistCache.remove(url);
+      await elsePart();
+    }
   } else {
-    await elsePart()
+    await elsePart();
   }
 
-  return { list:obj.list, playListName };
+  return { list: obj.list, playListName };
 };
 
 const main = async (url, q) => {

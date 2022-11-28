@@ -1,6 +1,6 @@
 const GetVideo = require("./GetVideo");
 const { getData } = require("./getData");
-const FileSystemCache_1 = require("file-system-cache");
+const FileSystemCache_1 = require("./FileSystemCache_1");
 const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
 
 const regExURL = /[?:&"\/|]+/g;
@@ -16,7 +16,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
 
   const videoList = [];
   let videoOptions = {
-    basePath: "./.cache/videos", // Optional. Path where cache files are stored (default).
+    basePath: "./cache/videos", // Optional. Path where cache files are stored (default).
     ns: `videos`, // Optional. A grouping namespace for items.
   };
 

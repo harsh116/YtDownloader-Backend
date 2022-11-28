@@ -1,6 +1,6 @@
 const GetAudio = require("./GetAudio");
 const { getData } = require("./getData");
-const FileSystemCache_1 = require("file-system-cache");
+const FileSystemCache_1 = require("./FileSystemCache_1");
 const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
 
 const regExURL = /[?:&"\/|]+/g;
@@ -9,7 +9,7 @@ const generateAudioDownloadURLS = async (playListName, list) => {
   let i = 1;
 
   const audioOptions = {
-    basePath: "./.cache/audio", // Optional. Path where cache files are stored (default).
+    basePath: "./cache/audio", // Optional. Path where cache files are stored (default).
     ns: `audio`, // Optional. A grouping namespace for items.
   };
 
