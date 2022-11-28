@@ -39,9 +39,9 @@ class FileSystemCache {
     const hash = unique(key, { format: "string" });
 
     const dir = this.basePath;
-    // if (!fs.existsSync(dir)) {
-    //   fs.mkdirSync(dir, { recursive: true });
-    // }
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
 
     const obj = { value };
     const str = JSON.stringify(obj);
