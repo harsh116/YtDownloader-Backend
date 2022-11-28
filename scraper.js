@@ -86,7 +86,7 @@ async function scrapePage(url) {
   var goAgain = true;
   while (goAgain) {
     const divCount = await page.$$eval("tp-yt-paper-spinner", (divs) => {
-      console.log("divs: ", divs);
+      // console.log("divs: ", divs);
       return divs.length;
     });
 
