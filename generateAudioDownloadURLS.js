@@ -9,7 +9,7 @@ const generateAudioDownloadURLS = async (playListName, list) => {
   let i = 1;
 
   const audioOptions = {
-    basePath: "./cache/audio", // Optional. Path where cache files are stored (default).
+    basePath: "/tmp/audio", // Optional. Path where cache files are stored (default).
     ns: `audio`, // Optional. A grouping namespace for items.
   };
 

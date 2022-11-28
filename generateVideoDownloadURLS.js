@@ -106,7 +106,7 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
   }
 
   let videoOptions = {
-    basePath: "cache/videos", // Optional. Path where cache files are stored (default).
+    basePath: "/tmp/videos", // Optional. Path where cache files are stored (default).
     ns: `videos_${q}`, // Optional. A grouping namespace for items.
   };
 
