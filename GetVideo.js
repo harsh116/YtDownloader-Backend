@@ -3,6 +3,8 @@ const tiny = require("tinyurl");
 const regex = require("./utils");
 const superagent = require("superagent");
 
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
 const extractNumber = (str) => {
   const regex = /^([0-9]+)\D*/g;
   return regex.exec(str)[1];
@@ -66,7 +68,7 @@ async function GetVideo(url, q = "480") {
 
         // console.log(title, quality);
         // console.log('q: ',q)
-        const highestQ=quality;  
+        const highestQ = quality;
         quality = extractNumber(quality);
         quality = Number(quality) > Number(q) ? q : quality;
 
@@ -96,7 +98,7 @@ async function GetVideo(url, q = "480") {
               quality,
               imageSrc,
               urlDown,
-              highestQ
+              highestQ,
             });
           })
           .catch((err) => {

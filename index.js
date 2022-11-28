@@ -36,5 +36,3 @@ app.post("/getIndividualList", getIndividualList);
 const server = app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);
 });
-
-server.timeout = 100000;
