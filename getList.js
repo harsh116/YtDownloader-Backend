@@ -12,7 +12,7 @@ const { getExpiryTimeInHours } = require("./helper");
 const FileSystemCache_1 = require("./FileSystemCache_1");
 
 const playlistoptions = {
-  basePath: "cache/playlist", // Optional. Path where cache files are stored (default).
+  basePath: "/tmp/playlist", // Optional. Path where cache files are stored (default).
   ns: "playlist", // Optional. A grouping namespace for items.
 };
 // fs.writeFileSync()
