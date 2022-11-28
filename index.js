@@ -33,6 +33,8 @@ app.get("/", (req, res) => {
 app.post("/getList", getList);
 app.post("/getIndividualList", getIndividualList);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);
 });
+
+server.timeout = 100000;
