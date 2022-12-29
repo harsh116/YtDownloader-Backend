@@ -71,8 +71,13 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
         videoList.push({ downURL, title: titleQuality });
       } else {
         const keys = Object.keys(obj);
-        const { highestQ } = obj[keys[0]];
-        const quality = Number(highestQ) > Number(q) ? q : highestQ;
+        const highestQ = obj[keys[0]]?.highestQ;
+
+        let quality = q;
+
+        if (highestQ) {
+          quality = Number(highestQ) > Number(q) ? q : highestQ;
+        }
 
         if (keys.includes(quality)) {
           await videoLisRecur(lis, quality);
