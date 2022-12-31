@@ -7,6 +7,7 @@ const { generateVideoDownloadURLS } = require("./generateVideoDownloadURLS");
 const { generateAudioDownloadURLS } = require("./generateAudioDownloadURLS");
 const { getData } = require("./getData");
 const { getExpiryTimeInHours } = require("./helper");
+const { redisClient } = require("./redis");
 
 // const fs = require("fs");
 const FileSystemCache_1 = require("./FileSystemCache_1");
@@ -88,6 +89,10 @@ const mainAudio = async (url) => {
 };
 
 const getList = async (req, res) => {
+  redisClient.on("connect", () => {
+    console.log("redis connected");
+  });
+
   let { playlistURL, quality, type } = req.body;
   playlistURL = playlistURL.trimStart();
   playlistURL = playlistURL.trimEnd();
