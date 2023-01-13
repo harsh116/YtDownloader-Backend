@@ -1,7 +1,8 @@
 const { videoLinkHOST } = require("./constants");
 const fetch = require("node-fetch");
+const { promiseSetTimeOut } = require("./helper");
 
-async function GetAudio(url) {
+const fetching = async (url) => {
   const res = await fetch(`${videoLinkHOST}/getAudioLink`, {
     method: "POST",
     mode: "cors",
@@ -15,6 +16,18 @@ async function GetAudio(url) {
   const data = await res.json();
 
   return data;
+};
+
+async function GetAudio(url) {
+  let data;
+  try {
+    data = await fetching(url);
+    return data;
+  } catch (err) {
+    console.log(err);
+    await promiseSetTimeOut(2000);
+    return await GetAudio(url);
+  }
 }
 
 module.exports = GetAudio;
