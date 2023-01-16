@@ -2,6 +2,7 @@ const PORT = process.env.PORT || 8081;
 const express = require("express");
 const cors = require("cors");
 const ms = require("ms");
+const responseState = require("./responseState");
 
 function setConnectionTimeout(time) {
   var delay = typeof time === "string" ? ms(time) : Number(time || 5000);
@@ -43,6 +44,10 @@ app.get("/", (req, res) => {
 
 app.post("/getList", setConnectionTimeout("12h"), getList);
 app.post("/getIndividualList", setConnectionTimeout("12h"), getIndividualList);
+app.get("/getResponseState", (req, res) => {
+  console.log(responseState);
+  res.json({ state: responseState.currentState, data: responseState.data });
+});
 
 const server = app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);

@@ -8,6 +8,7 @@ const { generateAudioDownloadURLS } = require("./generateAudioDownloadURLS");
 const { getData } = require("./getData");
 const { getExpiryTimeInHours } = require("./helper");
 const { redisClient } = require("./redis");
+const responseState = require("./responseState");
 
 // const fs = require("fs");
 const FileSystemCache_1 = require("./FileSystemCache_1");
@@ -112,35 +113,46 @@ const getList = async (req, res) => {
 
     let x = 0;
     const playlistVideoURLs = [];
-    for (let lis of list1) {
-      if (
-        lis.length == 0 ||
-        !(lis.length > 4 && lis.substr(0, 4).toLowerCase() === "http")
-      ) {
-        console.log("Invalid url");
-        playlistVideoURLs.push({ list: "Error", playListName: "NULL" });
-        continue;
+
+    const mainTask = async () => {
+      for (let lis of list1) {
+        if (
+          lis.length == 0 ||
+          !(lis.length > 4 && lis.substr(0, 4).toLowerCase() === "http")
+        ) {
+          console.log("Invalid url");
+          playlistVideoURLs.push({ list: "Error", playListName: "NULL" });
+          continue;
+        }
+        console.log("lis: ", lis);
+
+        if (type === "video") {
+          const obj = await main(lis, quality);
+          playlistVideoURLs.push({
+            videoList: obj.videoList,
+            playListName: obj.playListName,
+          });
+        } else {
+          const obj = await mainAudio(lis);
+          playlistVideoURLs.push({
+            audioList: obj.audioList,
+            playListName: obj.playListName,
+          });
+        }
+
+        x++;
       }
-      console.log("lis: ", lis);
+      responseState.setState(true);
+      responseState.setData(playlistVideoURLs);
+    };
 
-      if (type === "video") {
-        const obj = await main(lis, quality);
-        playlistVideoURLs.push({
-          videoList: obj.videoList,
-          playListName: obj.playListName,
-        });
-      } else {
-        const obj = await mainAudio(lis);
-        playlistVideoURLs.push({
-          audioList: obj.audioList,
-          playListName: obj.playListName,
-        });
-      }
+    responseState.setState(false);
+    responseState.setData(null);
 
-      x++;
-    }
+    mainTask();
 
-    res.status(200).json(playlistVideoURLs);
+    res.json("getting List");
+    // res.status(200).json(playlistVideoURLs);
   }
 };
 
