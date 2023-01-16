@@ -1,6 +1,16 @@
 const PORT = process.env.PORT || 8081;
 const express = require("express");
 const cors = require("cors");
+const ms = require("ms");
+
+function setConnectionTimeout(time) {
+  var delay = typeof time === "string" ? ms(time) : Number(time || 5000);
+
+  return function (req, res, next) {
+    res.connection.setTimeout(delay);
+    next();
+  };
+}
 
 const { getList } = require("./getList");
 const { getIndividualList } = require("./getIndividualList");
@@ -23,7 +33,7 @@ const app = express();
 //   );
 // });
 app.use(express.json());
-app.use(express.static(__dirname + "/build"))
+app.use(express.static(__dirname + "/build"));
 app.use(cors(corsOptions));
 // app.use(express.static(__dirname + "/public"));
 
@@ -31,8 +41,8 @@ app.get("/", (req, res) => {
   res.status(200).json("ok");
 });
 
-app.post("/getList", getList);
-app.post("/getIndividualList", getIndividualList);
+app.post("/getList", setConnectionTimeout("12h"), getList);
+app.post("/getIndividualList", setConnectionTimeout("12h"), getIndividualList);
 
 const server = app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);
