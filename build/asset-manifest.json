@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/ytDownloader/static/css/main.2b69d101.chunk.css",
-    "main.js": "/ytDownloader/static/js/main.7b897212.chunk.js",
-    "main.js.map": "/ytDownloader/static/js/main.7b897212.chunk.js.map",
+    "main.js": "/ytDownloader/static/js/main.92be8690.chunk.js",
+    "main.js.map": "/ytDownloader/static/js/main.92be8690.chunk.js.map",
     "runtime-main.js": "/ytDownloader/static/js/runtime-main.d05455b6.js",
     "runtime-main.js.map": "/ytDownloader/static/js/runtime-main.d05455b6.js.map",
     "static/js/2.0887ee84.chunk.js": "/ytDownloader/static/js/2.0887ee84.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.d05455b6.js",
     "static/js/2.0887ee84.chunk.js",
     "static/css/main.2b69d101.chunk.css",
-    "static/js/main.7b897212.chunk.js"
+    "static/js/main.92be8690.chunk.js"
   ]
 }
