@@ -128,12 +128,14 @@ const getList = async (req, res) => {
 
         if (type === "video") {
           const obj = await main(lis, quality);
+          console.log("🚀 ~ file: getList.js ~ line 131 ~ mainTask ~ obj", obj);
           playlistVideoURLs.push({
             videoList: obj.videoList,
             playListName: obj.playListName,
           });
         } else {
           const obj = await mainAudio(lis);
+          console.log("🚀 ~ file: getList.js ~ line 138 ~ mainTask ~ obj", obj);
           playlistVideoURLs.push({
             audioList: obj.audioList,
             playListName: obj.playListName,
@@ -142,6 +144,11 @@ const getList = async (req, res) => {
 
         x++;
       }
+
+      console.log(
+        "🚀 ~ file: getList.js ~ line 150 ~ mainTask ~ playlistVideoURLs",
+        playlistVideoURLs
+      );
       responseState.setState(true);
       responseState.setData(playlistVideoURLs);
     };
