@@ -41,7 +41,8 @@ const generateAudioDownloadURLS = async (playListName, list) => {
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
 
-      if (downURL === "Error") {
+      const httpRegex = /^http\.*/;
+      if (!httpRegex.test(downURL)) {
         console.log("deteced", title);
         // continue;
       } else {
@@ -112,7 +113,8 @@ const generateIndividualAudioDownloadURL = async (playListName, lis) => {
     const downURL = data.urlDown;
     console.log(i, ": ", downURL);
 
-    if (downURL === "Error") {
+    const httpRegex = /^http\.*/;
+    if (!httpRegex.test(downURL)) {
       console.log("deteced", title);
       // continue;
     } else {

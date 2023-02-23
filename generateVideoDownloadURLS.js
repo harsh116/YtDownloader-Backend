@@ -38,8 +38,9 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
 
-      if (downURL === "Error") {
-        console.log("deteced", title);
+      const httpRegex = /^http\.*/;
+      if (!httpRegex.test(downURL)) {
+        console.log("error deteced", title);
         // return;
         // continue;
       } else {
@@ -131,7 +132,9 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
 
-      if (downURL === "Error") {
+      const httpRegex = /^http\.*/;
+
+      if (!httpRegex.test(downURL)) {
         console.log("deteced", title);
         // continue;
       } else {
