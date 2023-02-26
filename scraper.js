@@ -1,16 +1,16 @@
-let puppeteer; //require("puppeteer");
+let puppeteer = require("puppeteer-core"); //require("puppeteer");
 
 let chrome = {};
 
 const BROWSERLESS_API_KEY =
   process.env["TOKEN"] || "0fd64530-2641-45f8-853b-b2d6414875f8";
 
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  chrome = require("chrome-aws-lambda");
-  puppeteer = require("puppeteer-core");
-} else {
-  puppeteer = require("puppeteer-core");
-}
+// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+//   chrome = require("chrome-aws-lambda");
+//   puppeteer = require("puppeteer-core");
+// } else {
+//   puppeteer = require("puppeteer-core");
+// }
 
 // var path = require("path");
 // const { resolve } = require("path");
@@ -104,6 +104,7 @@ async function scrapePage(url) {
     goAgain = divCount != 0;
   }
   elements = await page.$$("a.ytd-playlist-video-renderer");
+
   var len = elements.length;
   console.log(`Items in playlist: ${len}`);
 

@@ -26,7 +26,7 @@ async function GetVideo(url, q) {
     return data;
   } catch (err) {
     console.log(err);
-    await promiseSetTimeOut(2000);
+    await promiseSetTimeOut(10000);
     return await GetVideo(url, q);
   }
 }
