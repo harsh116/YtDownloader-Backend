@@ -3,9 +3,11 @@ const { getData } = require("./getData");
 const FileSystemCache_1 = require("./FileSystemCache_1");
 const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
 
+const ONE_DAY_IN_SECONDS = 3600 * 24;
+
 const regExURL = /[?:&"\/|]+/g;
 
-const generateAudioDownloadURLS = async (playListName, list) => {
+const generateAudioDownloadURLS = async (playListName, list, q) => {
   // console.log(
   // "🚀 ~ file: generateAudioDownloadURLS.js ~ line 9 ~ generateAudioDownloadURLS ~ list",
   // list
@@ -31,12 +33,12 @@ const generateAudioDownloadURLS = async (playListName, list) => {
     let data = {};
 
     const elsePart = async () => {
-      data = await GetAudio(lis);
+      data = await GetAudio(lis, title, q);
       // console.log(
       // "🚀 ~ file: generateAudioDownloadURLS.js ~ line 32 ~ elsePart ~ data",
       // data
       // );
-      data["expiry_time"] = getExpiryTimeInHours(0.5);
+      data["expiry_time"] = getExpiryTimeInHours(100000000);
 
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
@@ -46,11 +48,11 @@ const generateAudioDownloadURLS = async (playListName, list) => {
         console.log("deteced", title);
         // continue;
       } else {
-        audioCache.set(lis, data);
+        // audioCache.set(lis, data,ONE_DAY_IN_SECONDS*6);
       }
 
       await promiseSetTimeOut(1000);
-      audioList.push({ downURL, title });
+      audioList.push({ downURL, title, type: "mp3" });
       // console.log(
       // "🚀 ~ file: generateAudioDownloadURLS.js ~ line 48 ~ elsePart ~ audioList",
       // audioList
@@ -67,7 +69,7 @@ const generateAudioDownloadURLS = async (playListName, list) => {
 
       const downURL = data.urlDown;
       console.log(i, ": ", downURL);
-      audioList.push({ downURL, title });
+      audioList.push({ downURL, title, type: "mp3" });
       // console.log(
       // "🚀 ~ file: generateAudioDownloadURLS.js ~ line 62 ~ generateAudioDownloadURLS ~ audioList",
       // audioList
@@ -90,7 +92,7 @@ const generateAudioDownloadURLS = async (playListName, list) => {
   return audioList;
 };
 
-const generateIndividualAudioDownloadURL = async (playListName, lis) => {
+const generateIndividualAudioDownloadURL = async (playListName, lis, q) => {
   let i = 1;
 
   const audioOptions = {
@@ -108,7 +110,7 @@ const generateIndividualAudioDownloadURL = async (playListName, lis) => {
   let data = {};
 
   const elsePart = async () => {
-    data = await GetAudio(lis);
+    data = await GetAudio(lis, title, q);
 
     const downURL = data.urlDown;
     console.log(i, ": ", downURL);
@@ -118,7 +120,8 @@ const generateIndividualAudioDownloadURL = async (playListName, lis) => {
       console.log("deteced", title);
       // continue;
     } else {
-      audioCache.set(lis, data);
+      // audioCache.set(lis, data);
+      // audioCache.set(lis, data,ONE_DAY_IN_SECONDS*6);
     }
 
     await promiseSetTimeOut(1000);

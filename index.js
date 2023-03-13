@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const ms = require("ms");
 const responseState = require("./responseState");
+const { sendMedia } = require("./sendMedia");
 
 function setConnectionTimeout(time) {
   var delay = typeof time === "string" ? ms(time) : Number(time || 5000);
@@ -15,6 +16,7 @@ function setConnectionTimeout(time) {
 
 const { getList } = require("./getList");
 const { getIndividualList } = require("./getIndividualList");
+const { redisClient } = require("./redis");
 const corsOptions = {
   credentials: true,
 };
@@ -47,8 +49,20 @@ app.post("/getIndividualList", setConnectionTimeout("12h"), getIndividualList);
 app.get("/getResponseState", (req, res) => {
   console.log(responseState);
   res.json({ state: responseState.currentState, data: responseState.data });
+  // res.send()
 });
+app.post("/sendMedia", sendMedia);
 
 const server = app.listen(PORT, () => {
   console.log(`app is running on port ${PORT}`);
+  // redisClient.flushDb(function (err, succeeded) {
+  //   console.log(succeeded); // will be true if successfull
+  // });
+  // redisClient.FLUSHALL("sync"); //("ASYNC", function (err, succeeded)
+  // {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   console.log(succeeded); // will be true if successfull
+  // });
 });

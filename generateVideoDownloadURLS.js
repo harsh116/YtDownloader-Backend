@@ -1,11 +1,29 @@
 const GetVideo = require("./GetVideo");
 const { getData } = require("./getData");
 const FileSystemCache_1 = require("./FileSystemCache_1");
-const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
+const {
+  promiseSetTimeOut,
+  getExpiryTimeInHours,
+  toNumber,
+} = require("./helper");
 
 const regExURL = /[?:&"\/|]+/g;
 
-const VALID_Q = ["144", "240", "360", "480", "720", "1080"];
+const VALID_Q = [
+  "144",
+  "240",
+  "360",
+  "480",
+  "720",
+  "720c",
+  "1080",
+  "144y",
+  "240y",
+  "360y",
+  "480y",
+  "720y",
+  "1080y",
+];
 
 const generateVideoDownloadURLS = async (playListName, list, q) => {
   let i = 1;
@@ -50,7 +68,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
       await promiseSetTimeOut(1000);
       const titleQuality = `${title} ${quality}`;
       console.log(titleQuality);
-      videoList.push({ downURL, title: titleQuality });
+      videoList.push({ downURL, title: titleQuality, type: "mp4", quality });
     };
 
     if (await videoCache.fileExists(lis)) {
@@ -69,7 +87,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
         const titleQuality = `${title} ${quality}`;
         console.log(titleQuality);
 
-        videoList.push({ downURL, title: titleQuality });
+        videoList.push({ downURL, title: titleQuality, quality });
       } else {
         const keys = Object.keys(obj);
         const highestQ = obj[keys[0]]?.highestQ;
@@ -77,7 +95,7 @@ const generateVideoDownloadURLS = async (playListName, list, q) => {
         let quality = q;
 
         if (highestQ) {
-          quality = Number(highestQ) > Number(q) ? q : highestQ;
+          quality = toNumber(highestQ) > toNumber(q) ? q : highestQ;
         }
 
         if (keys.includes(quality)) {
@@ -126,6 +144,8 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
 
     const videoLisRecurElse = async () => {
       let data = await GetVideo(lis, q);
+
+      //quality is string
       let quality = data.quality;
       obj[quality] = data;
 
@@ -144,7 +164,7 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
       await promiseSetTimeOut(1000);
       const titleQuality = `${title} ${quality}`;
       console.log(titleQuality);
-      return { videoURL: downURL, title: titleQuality };
+      return { videoURL: downURL, title: titleQuality, quality };
     };
 
     if (await videoCache.fileExists(lis)) {
@@ -163,11 +183,11 @@ const generateIndividualVideoDownloadURL = async (playListName, lis, q) => {
         const titleQuality = `${title} ${quality}`;
         console.log(titleQuality);
 
-        return { videoURL: downURL, title: titleQuality };
+        return { videoURL: downURL, title: titleQuality, quality };
       } else {
         const keys = Object.keys(obj);
         const { highestQ } = obj[keys[0]];
-        const quality = Number(highestQ) > Number(q) ? q : highestQ;
+        const quality = toNumber(highestQ) > toNumber(q) ? q : highestQ;
 
         if (keys.includes(quality)) {
           return await videoLisRecur(lis, quality);

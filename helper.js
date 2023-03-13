@@ -15,7 +15,13 @@ const getExpiryTimeInHours = (hours) => {
   return d.getTime();
 };
 
+const toNumber = (str) => {
+  const regex = /[0-9]+/;
+  return Number(regex.exec(str));
+};
+
 module.exports = {
   promiseSetTimeOut,
   getExpiryTimeInHours,
+  toNumber,
 };

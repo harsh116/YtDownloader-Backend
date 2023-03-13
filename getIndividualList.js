@@ -14,13 +14,13 @@ const {
 // const fs = require("fs");
 
 const main = async (url, q, playListName = "videos") => {
-  const { videoURL, title } = await generateIndividualVideoDownloadURL(
+  const { videoURL, title, quality } = await generateIndividualVideoDownloadURL(
     playListName,
     url,
     q
   );
 
-  return { playListName, videoURL, title };
+  return { playListName, videoURL, title, quality };
 
   // return { list, playListName };
 
@@ -30,10 +30,11 @@ const main = async (url, q, playListName = "videos") => {
   // }
 };
 
-const mainAudio = async (url, playListName = "audios") => {
+const mainAudio = async (url, playListName = "audios", q = "128") => {
   const { audioURL, title } = await generateIndividualAudioDownloadURL(
     playListName,
-    url
+    url,
+    q
   );
 
   return { playListName, audioURL, title };
@@ -41,6 +42,8 @@ const mainAudio = async (url, playListName = "audios") => {
 
 const getIndividualList = async (req, res) => {
   const { urls, type, quality } = req.body;
+
+  console.log("quality: ", quality);
 
   // res.json("done");
   // return;
@@ -68,14 +71,22 @@ const getIndividualList = async (req, res) => {
       console.log("lis: ", lis);
 
       if (type === "video") {
-        const { playListName, videoURL, title } = await main(lis, quality);
-        videosURLs.push({
-          playListName,
-          videoURL,
-          title,
-        });
+        // const { playListName, videoURL, title, quality } =
+        const videoData = await main(lis, quality);
+        // videosURLs.push({
+        //   playListName,
+        //   videoURL,
+        //   title,
+        //   quality,
+        // });
+
+        videosURLs.push(videoData);
       } else {
-        const { audioURL, playListName, title } = await mainAudio(lis);
+        const { audioURL, playListName, title } = await mainAudio(
+          lis,
+          "audios",
+          quality
+        );
         videosURLs.push({
           playListName,
           audioURL,

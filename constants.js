@@ -1,11 +1,12 @@
 // const videoLinkHOST = "https://ill-lion-jumpsuit.cyclic.app";
-// const videoLinkHOST = "http://localhost:8082";
+// const videoLinkHOST = "http://localhost:8080";
 // const videoLinkHOST = 'https://kjw5zb.deta.dev'
 // const videoLinkHOST = "https://y2mateapi-1-r4009095.deta.app";
 // const videoLinkHOST = "https://y2mateapi-2-r4009095.deta.app";
-const videoLinkHOST = "https://rich-ruby-salmon-robe.cyclic.app";
+// const videoLinkHOST = "https://rich-ruby-salmon-robe.cyclic.app";
 // const videoLinkHOST = "https://cautious-plucky-patient.glitch.me/";
 // const videoLinkHOST = "https://developing-citrine-touch.glitch.me/";
+const videoLinkHOST = "https://y2downloadspace-1-v8597542.deta.app";
 
 module.exports = { videoLinkHOST };
 

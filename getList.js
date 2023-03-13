@@ -82,9 +82,9 @@ const main = async (url, q) => {
   // }
 };
 
-const mainAudio = async (url) => {
+const mainAudio = async (url, q = "128") => {
   const { list, playListName } = await gettingVideosURL(url);
-  const audioList = await generateAudioDownloadURLS(playListName, list);
+  const audioList = await generateAudioDownloadURLS(playListName, list, q);
 
   return { playListName, audioList };
 };
@@ -134,7 +134,7 @@ const getList = async (req, res) => {
             playListName: obj.playListName,
           });
         } else {
-          const obj = await mainAudio(lis);
+          const obj = await mainAudio(lis, quality);
           console.log("🚀 ~ file: getList.js ~ line 138 ~ mainTask ~ obj", obj);
           playlistVideoURLs.push({
             audioList: obj.audioList,

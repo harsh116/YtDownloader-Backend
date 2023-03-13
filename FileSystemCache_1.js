@@ -43,7 +43,7 @@ class FileSystemCache {
     }
   }
 
-  set(key, value) {
+  set(key, value, time = 3600 * 0.5) {
     // const hash = crypto.createHash("sha256", key).digest(key);
     // const hash = unique(key, { format: "string" });
 
@@ -56,7 +56,9 @@ class FileSystemCache {
     const obj = { value };
     const str = JSON.stringify(obj);
     // fs.writeFileSync(`${this.basePath}/${hash}`, str);
-    redisClient.set(newKey, str);
+
+    redisClient.set(newKey, str, "EX", time);
+    // redisClient.set(newKey, str);
   }
 
   remove(key) {

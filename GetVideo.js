@@ -3,7 +3,7 @@ const fetch = require("node-fetch");
 const { promiseSetTimeOut } = require("./helper");
 
 const fetching = async (url, q = "480") => {
-  const res = await fetch(`${videoLinkHOST}/getVideoLink`, {
+  const res = await fetch(`${videoLinkHOST}/getLink`, {
     method: "POST",
     mode: "cors",
     headers: {
@@ -21,6 +21,7 @@ const fetching = async (url, q = "480") => {
 
 async function GetVideo(url, q) {
   let data;
+  // q = Number(q);
   try {
     data = await fetching(url, q);
     return data;
