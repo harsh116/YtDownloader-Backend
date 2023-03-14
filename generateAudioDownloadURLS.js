@@ -52,7 +52,7 @@ const generateAudioDownloadURLS = async (playListName, list, q) => {
       }
 
       await promiseSetTimeOut(1000);
-      audioList.push({ downURL, title, type: "mp3" });
+      audioList.push({ downURL, title, type: "mp3", quality: q });
       // console.log(
       // "🚀 ~ file: generateAudioDownloadURLS.js ~ line 48 ~ elsePart ~ audioList",
       // audioList
@@ -125,7 +125,7 @@ const generateIndividualAudioDownloadURL = async (playListName, lis, q) => {
     }
 
     await promiseSetTimeOut(1000);
-    return { audioURL: downURL, title };
+    return { audioURL: downURL, title, quality: q };
   };
 
   if (await audioCache.fileExists(lis)) {

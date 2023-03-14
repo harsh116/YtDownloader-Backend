@@ -31,13 +31,9 @@ const main = async (url, q, playListName = "videos") => {
 };
 
 const mainAudio = async (url, playListName = "audios", q = "128") => {
-  const { audioURL, title } = await generateIndividualAudioDownloadURL(
-    playListName,
-    url,
-    q
-  );
+  const data = await generateIndividualAudioDownloadURL(playListName, url, q);
 
-  return { playListName, audioURL, title };
+  return { ...data, playListName };
 };
 
 const getIndividualList = async (req, res) => {
@@ -82,16 +78,8 @@ const getIndividualList = async (req, res) => {
 
         videosURLs.push(videoData);
       } else {
-        const { audioURL, playListName, title } = await mainAudio(
-          lis,
-          "audios",
-          quality
-        );
-        videosURLs.push({
-          playListName,
-          audioURL,
-          title,
-        });
+        const audioobj = await mainAudio(lis, "audios", quality);
+        videosURLs.push(audioobj);
       }
 
       x++;
