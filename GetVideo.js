@@ -28,10 +28,10 @@ const getVideoLink = async (url) => {
 
   dURL = dURL + `&title=${encodeURIComponent(title)}`;
 
-  const urlDown = await tiny.shorten(dURL);
+  // const urlDown = await tiny.shorten(dURL);
   console.log("video durl: ", dURL);
 
-  return { urlDown, title, highestQ: "720", quality: "360" };
+  return { urlDown: dURL, title, highestQ: "720", quality: "360" };
 };
 
 const fetching = async (url, q = "480") => {

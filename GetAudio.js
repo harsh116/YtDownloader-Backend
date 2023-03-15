@@ -33,8 +33,8 @@ const getAudioLink = async (url) => {
   dURL = dURL + `&title=${encodeURIComponent(title)}&range=0-${end}`;
 
   console.log("audio durl: ", dURL);
-  const urlDown = await tiny.shorten(dURL);
-  return { urlDown, title };
+  // const urlDown = await tiny.shorten(dURL);
+  return { urlDown: dURL, title };
 };
 
 const fetching = async (url, q) => {
