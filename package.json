@@ -38,6 +38,7 @@
     "puppeteer-core": "^10.1.0",
     "redis": "^4.5.1",
     "superagent": "^8.0.3",
-    "tinyurl": "^1.1.7"
+    "tinyurl": "^1.1.7",
+    "ytdl-core": "^4.11.2"
   }
 }
