@@ -85,7 +85,13 @@ async function GetAudio(url, title, q = "128") {
   } catch (err) {
     console.log(err);
     await promiseSetTimeOut(2000);
-    return await GetAudio(url);
+    try {
+      data = await fetching(url, q);
+      return data;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
 }
 

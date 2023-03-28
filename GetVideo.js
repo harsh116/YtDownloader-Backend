@@ -64,7 +64,13 @@ async function GetVideo(url, q) {
   } catch (err) {
     console.log(err);
     await promiseSetTimeOut(10000);
-    return await GetVideo(url, q);
+    try {
+      data = await fetching(url, q);
+      return data;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
 }
 

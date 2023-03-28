@@ -15,6 +15,8 @@ const sendMedia = (req, res) => {
       //   const file = await res.blob();
       const arrayBuffer = await blob.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
+
+      // console.log("bytelength: ", buffer.byteLength());
       //   const arrayByte = new Uint8Array(arrayBuffer);
 
       res.writeHead(200, {
