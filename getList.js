@@ -50,6 +50,7 @@ const gettingVideosURL = async (url) => {
   console.log("playlist name: ", playListName);
   let obj = {};
   const elsePart = async () => {
+    console.log('playlistdata  not found in cache')
     const list = await scrapePage(url);
     obj["expiry_time"] = getExpiryTimeInHours(1);
     obj["list"] = list;
@@ -57,8 +58,11 @@ const gettingVideosURL = async (url) => {
   };
   if (await playlistCache.fileExists(url)) {
     obj = await playlistCache.get(url);
+    console.log('found playlistCache: ',obj)
+
     if (obj.expiry_time < Date.now()) {
       playlistCache.remove(url);
+
       await elsePart();
     }
   } else {

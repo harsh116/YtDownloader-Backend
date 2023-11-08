@@ -2,8 +2,12 @@ let puppeteer = require("puppeteer-core"); //require("puppeteer");
 
 let chrome = {};
 
-const BROWSERLESS_API_KEY =
-  process.env["TOKEN"] || "0fd64530-2641-45f8-853b-b2d6414875f8";
+// const BROWSERLESS_API_KEY =
+  // process.env["TOKEN"] || "0fd64530-2641-45f8-853b-b2d6414875f8";
+
+
+   const BROWSERLESS_API_KEY =
+  process.env["TOKEN"] || "cd3f2dd8-516d-47ce-b453-1005ddbbab18";
 
 // if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 //   chrome = require("chrome-aws-lambda");
@@ -79,6 +83,7 @@ async function scrapePage(url) {
   // const browser = await puppeteer.launch({executablePath: 'node_modules/chromium/lib/chromium/chrome-win/Chrome'});
   // const browser = await puppeteer.launch(options);
   const browser = await puppeteer.connect(options);
+
   const page = await browser.newPage();
   const totalStart = Date.now();
 
