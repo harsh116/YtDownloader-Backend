@@ -36,7 +36,9 @@ const playlistCache = new FileSystemCache_1.FileSystemCache(playlistoptions);
 const regExURL = /[?:&"\/|]+/g;
 
 // app.use(express.static(__dirname + "/public"));
-const { scrapePage } = require("./scraper");
+// const { scrapePage } = require("./scraper");
+
+const { getPlayListURLS } = require("./playlist");
 
 const gettingVideosURL = async (url) => {
   let playListName = await getData(url);
@@ -50,15 +52,23 @@ const gettingVideosURL = async (url) => {
   console.log("playlist name: ", playListName);
   let obj = {};
   const elsePart = async () => {
-    console.log('playlistdata  not found in cache')
-    const list = await scrapePage(url);
+    console.log("playlistdata  not found in cache");
+    // const list = await scrapePage(url);
+
+    // now using ytpl instead of directly scraping from web
+    // const list = await scrapePage(url);
+    const list = await getPlayListURLS(url);
+
     obj["expiry_time"] = getExpiryTimeInHours(1);
+
+    // list contains url of al videos in a playlist
     obj["list"] = list;
     await playlistCache.set(url, obj);
   };
   if (await playlistCache.fileExists(url)) {
+    // if (false) {
     obj = await playlistCache.get(url);
-    console.log('found playlistCache: ',obj)
+    console.log("found playlistCache: ", obj);
 
     if (obj.expiry_time < Date.now()) {
       playlistCache.remove(url);

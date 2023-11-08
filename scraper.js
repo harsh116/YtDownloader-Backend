@@ -82,12 +82,24 @@ async function scrapePage(url) {
   }
   // const browser = await puppeteer.launch({executablePath: 'node_modules/chromium/lib/chromium/chrome-win/Chrome'});
   // const browser = await puppeteer.launch(options);
-  const browser = await puppeteer.connect(options);
+
+  console.log('before connecting to browserless')
+  // const browser = await puppeteer.connect(options);
+
+  const browser = await puppeteer.launch({ executablePath: "thorium-browser",
+    headless: false,})
+
+
+
+  console.log('after connecting to browserless')
 
   const page = await browser.newPage();
   const totalStart = Date.now();
 
   await page.goto(url, { timeout: 0 });
+
+  console.log('opened url: ',url)
+
   // await page.setViewport({
   //   width: 1200,
   //   height: 800,
@@ -102,12 +114,16 @@ async function scrapePage(url) {
       return divs.length;
     });
 
+    console.log('divCount: ', divCount)
+
     await page.evaluate(async () => {
       window.scrollTo(0, document.querySelector("#primary").scrollHeight);
       // window.scrollTo(0, document.body.scrollHeight);
     });
     goAgain = divCount != 0;
   }
+
+  console.log('page evaluated')
   elements = await page.$$("a.ytd-playlist-video-renderer");
 
   var len = elements.length;
