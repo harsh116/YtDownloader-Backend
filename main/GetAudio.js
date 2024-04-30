@@ -1,6 +1,6 @@
-const { videoLinkHOST } = require("./constants");
+const { videoLinkHOST } = require("../constants");
 const fetch = require("node-fetch");
-const { promiseSetTimeOut } = require("./helper");
+const { promiseSetTimeOut } = require("../helpers/helper");
 // const { createFileBin } = require("./createFilebin");
 // const { upload } = require("./upload");
 

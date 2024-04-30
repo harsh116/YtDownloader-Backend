@@ -1,6 +1,6 @@
 const fs = require("fs");
 const crypto = require("crypto");
-const { unique } = require("./generateHash");
+const { unique } = require("../helpers/generateHash");
 const { redisClient } = require("./redis");
 
 class FileSystemCache {

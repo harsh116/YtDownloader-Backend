@@ -5,13 +5,13 @@ const fetch = require("node-fetch");
 // const GetAudio = require("./GetAudio");
 const { generateVideoDownloadURLS } = require("./generateVideoDownloadURLS");
 const { generateAudioDownloadURLS } = require("./generateAudioDownloadURLS");
-const { getData } = require("./getData");
-const { getExpiryTimeInHours } = require("./helper");
-const { redisClient } = require("./redis");
-const responseState = require("./responseState");
+const { getData } = require("../helpers/getData");
+const { getExpiryTimeInHours } = require("../helpers/helper");
+const { redisClient } = require("../states/redis");
+const responseState = require("../states/responseState");
 
 // const fs = require("fs");
-const FileSystemCache_1 = require("./FileSystemCache_1");
+const FileSystemCache_1 = require("../states/FileSystemCache_1");
 
 const playlistoptions = {
   basePath: "/tmp/playlist", // Optional. Path where cache files are stored (default).
@@ -38,7 +38,7 @@ const regExURL = /[?:&"\/|]+/g;
 // app.use(express.static(__dirname + "/public"));
 // const { scrapePage } = require("./scraper");
 
-const { getPlayListURLS } = require("./playlist");
+const { getPlayListURLS } = require("../helpers/playlist");
 
 const gettingVideosURL = async (url) => {
   let playListName = await getData(url);

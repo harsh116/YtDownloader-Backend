@@ -1,6 +1,6 @@
-const { videoLinkHOST } = require("./constants");
+const { videoLinkHOST } = require("../constants");
 const fetch = require("node-fetch");
-const { promiseSetTimeOut } = require("./helper");
+const { promiseSetTimeOut } = require("../helpers/helper");
 const ytdl = require("ytdl-core");
 const tiny = require("tinyurl");
 

@@ -1,11 +1,11 @@
-const dotenv=require("dotenv")
+const dotenv = require("dotenv");
 dotenv.config();
 const PORT = process.env.PORT || 8081;
 const express = require("express");
 const cors = require("cors");
 const ms = require("ms");
-const responseState = require("./responseState");
-const { sendMedia } = require("./sendMedia");
+const responseState = require("./states/responseState");
+const { sendMedia } = require("./helpers/sendMedia");
 
 function setConnectionTimeout(time) {
   var delay = typeof time === "string" ? ms(time) : Number(time || 5000);
@@ -16,9 +16,9 @@ function setConnectionTimeout(time) {
   };
 }
 
-const { getList } = require("./getList");
-const { getIndividualList } = require("./getIndividualList");
-const { redisClient } = require("./redis");
+const { getList } = require("./main/getList");
+const { getIndividualList } = require("./main/getIndividualList");
+const { redisClient } = require("./states/redis");
 const corsOptions = {
   credentials: true,
 };

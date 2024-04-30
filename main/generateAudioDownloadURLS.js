@@ -1,7 +1,10 @@
 const GetAudio = require("./GetAudio");
-const { getData } = require("./getData");
-const FileSystemCache_1 = require("./FileSystemCache_1");
-const { promiseSetTimeOut, getExpiryTimeInHours } = require("./helper");
+const { getData } = require("../helpers/getData");
+const FileSystemCache_1 = require("../states/FileSystemCache_1");
+const {
+  promiseSetTimeOut,
+  getExpiryTimeInHours,
+} = require("../helpers/helper");
 
 const ONE_DAY_IN_SECONDS = 3600 * 24;
 

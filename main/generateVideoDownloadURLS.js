@@ -1,11 +1,11 @@
 const GetVideo = require("./GetVideo");
-const { getData } = require("./getData");
-const FileSystemCache_1 = require("./FileSystemCache_1");
+const { getData } = require("../helpers/getData");
+const FileSystemCache_1 = require("../states/FileSystemCache_1");
 const {
   promiseSetTimeOut,
   getExpiryTimeInHours,
   toNumber,
-} = require("./helper");
+} = require("../helpers/helper");
 
 const regExURL = /[?:&"\/|]+/g;
 
