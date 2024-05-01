@@ -9,6 +9,8 @@ const {
 
 const regExURL = /[?:&"\/|]+/g;
 
+// to double check if quality is valid ot not
+// suufix y means that source is y2mate instead of ytdl
 const VALID_Q = [
   "144",
   "240",

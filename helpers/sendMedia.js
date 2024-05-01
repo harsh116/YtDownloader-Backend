@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const sendMedia = (req, res) => {
   const { url } = req.body;
-
+  console.log("in sendmedia");
   let initialTime = Date.now();
   fetch(url)
     .then((res) => res.blob())

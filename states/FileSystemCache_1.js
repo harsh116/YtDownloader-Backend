@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const { unique } = require("../helpers/generateHash");
 const { redisClient } = require("./redis");
 
+// Class to deal with redis functions and managing keys and value is JSON
 class FileSystemCache {
   constructor(options = {}) {
     this.basePath = options.basePath;

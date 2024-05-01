@@ -1,5 +1,6 @@
 // const videoLinkHOST = "https://ill-lion-jumpsuit.cyclic.app";
 // const videoLinkHOST = "http://localhost:8080";
+// const videoLinkHOSTYTDL = "http://localhost:8083";
 // const videoLinkHOST = 'https://kjw5zb.deta.dev'
 // const videoLinkHOST = "https://y2mateapi-1-r4009095.deta.app";
 // const videoLinkHOST = "https://y2mateapi-2-r4009095.deta.app";
@@ -8,7 +9,9 @@
 // const videoLinkHOST = "https://developing-citrine-touch.glitch.me/";
 const videoLinkHOST = "https://y2downloadspace-1-v8597542.deta.app";
 
-module.exports = { videoLinkHOST };
+const videoLinkHOSTYTDL = "https://weathersirepo.helioho.st";
+
+module.exports = { videoLinkHOST, videoLinkHOSTYTDL };
 
 // 0+XuAUPaJ+n1QNGPW5Y+yxZgPRF1HVvM5l7v2cVU6cPC3DOFRPbr/mmNMzmAhrM4pwKyjl/7G4RQz7oh5LX/ixfkVy1dD20e : 1080
 
