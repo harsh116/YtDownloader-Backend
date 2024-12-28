@@ -35,7 +35,7 @@
     "node-fetch": "^2.6.7",
     "redis": "^4.5.1",
     "tinyurl": "^1.1.7",
-    "ytdl-core": "git+https://github.com/khlevon/node-ytdl-core.git#v4.11.4-patch.2",
+    "ytdl-core": "npm:@distube/ytdl-core@^4.13.3",
     "ytpl": "^2.3.0"
   }
 }
